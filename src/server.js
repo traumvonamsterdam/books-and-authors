@@ -1,23 +1,17 @@
 import express from "express";
-import { ApolloServer, gql } from "apollo-server-express";
-
-const typeDefs = gql`
-  type Query {
-    "A simple type for getting started!"
-    hello: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => "world"
-  }
-};
+import { ApolloServer } from "apollo-server-express";
+import mongoose from "mongoose";
+import { typeDefs, resolvers, mocks } from "./schema";
 
 const server = new ApolloServer({
   typeDefs,
   resolvers
 });
+
+mongoose.connect(
+  "mongodb+srv://jlfly12:wZSYV13*Fm@cluster0-1lwwv.mongodb.net/test?retryWrites=true&w=majority",
+  { useNewUrlParser: true }
+);
 
 const app = express();
 server.applyMiddleware({ app });
