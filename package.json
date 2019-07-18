@@ -1,0 +1,28 @@
+{
+  "name": "graphiql-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-watch src/server.js",
+    "build": "babel src --out-dir dist",
+    "serve": "node dist/server.js"
+  },
+  "author": "James Leung",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "apollo-server": "^2.7.0",
+    "apollo-server-express": "^2.7.0",
+    "babel-watch": "^7.0.0",
+    "express": "^4.17.1",
+    "graphql": "^14.4.2",
+    "react-apollo": "^2.5.8"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5"
+  }
+}
