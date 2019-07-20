@@ -3,7 +3,7 @@ import { ApolloServer } from "apollo-server-express";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import { typeDefs, resolvers, mocks } from "./schema";
+import { typeDefs, resolvers } from "./schema";
 
 const server = new ApolloServer({
   typeDefs,
