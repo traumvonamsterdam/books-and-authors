@@ -1,5 +1,5 @@
 import { AuthorModel } from "../models/author";
-import { BookModel } from "../models/book";
+import { transformAuthor } from "./common";
 
 export default {
   addAuthor: async (root, args) => {
@@ -17,20 +17,28 @@ export default {
         age,
         books: []
       });
-      return author.save();
+      await author.save();
+      return transformAuthor(author);
     } catch (err) {
       throw err;
     }
   },
-  deleteAuthor: (root, args) => {
-    return AuthorModel.deleteOne({ _id: args.id });
+  deleteAuthor: async (root, { name }) => {
+    let author = await AuthorModel.findOne({ name });
+    if (!author) {
+      throw new Error("No author with given name.");
+    }
+
+    author = transformAuthor(author);
+    await AuthorModel.deleteOne({ name });
+    return author;
   },
-  updateAuthor: (root, args) => {
-    const { old_name, new_name } = args;
-    return AuthorModel.findOneAndUpdate(
+  updateAuthor: async (root, { old_name, new_name }) => {
+    const author = await AuthorModel.findOneAndUpdate(
       { name: old_name },
       { name: new_name },
       { useFindAndModify: false }
     );
+    return transformAuthor(author);
   }
 };

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Adopt } from "react-adopt";
+import { adopt } from "react-adopt";
 import { Query, Mutation } from "react-apollo";
 import { getBooksQuery } from "./queries";
 import { addBookMutation } from "./mutations";
@@ -14,6 +14,37 @@ class AddBook extends Component {
       authorId: ""
     };
   }
+
+  getBooks = ({ render }) => <Query query={getBooksQuery}>{render}</Query>;
+
+  addBook = ({ render }) => (
+    <Mutation mutation={addBookMutation}>{render}</Mutation>
+  );
+
+  mapper = {
+    getBooks: this.getBooks,
+    addBook: this.addBook
+  };
+
+  titleInput = () => (
+    <div className="field">
+      <label>Book title:</label>
+      <input
+        type="text"
+        onChange={e => this.setState({ title: e.target.value })}
+      />
+    </div>
+  );
+
+  pagesInput = () => (
+    <div className="field">
+      <label>Pages:</label>
+      <input
+        type="number"
+        onChange={e => this.setState({ pages: +e.target.value })}
+      />
+    </div>
+  );
 
   authorSelect = ({ loading, error, data }) => {
     if (loading) {
@@ -37,49 +68,25 @@ class AddBook extends Component {
     );
   };
 
-  getBooks = ({ render }) => <Query query={getBooksQuery}>{render}</Query>;
-
-  addBook = ({ render }) => (
-    <Mutation mutation={addBookMutation}>{render}</Mutation>
-  );
-
-  mapper = {
-    getBooks: this.getBooks,
-    addBook: this.addBook
+  handleSubmit = (addBook, e) => {
+    e.preventDefault();
+    const { title, pages, authorId } = this.state;
+    addBook({ variables: { title, pages, authorId } });
   };
 
   render() {
+    const AddBookForm = adopt(this.mapper);
     return (
-      <Adopt mapper={this.mapper}>
-        {({ getBooks: args, addBook }) => {
-          return (
-            <form
-              onSubmit={e => {
-                e.preventDefault();
-                const { title, pages, authorId } = this.state;
-                addBook({ variables: { title, pages, authorId } });
-              }}
-            >
-              <div className="field">
-                <label>Book title:</label>
-                <input
-                  type="text"
-                  onChange={e => this.setState({ title: e.target.value })}
-                />
-              </div>
-              <div className="field">
-                <label>Pages:</label>
-                <input
-                  type="number"
-                  onChange={e => this.setState({ pages: +e.target.value })}
-                />
-              </div>
-              {this.authorSelect(args)}
-              <button>Add Book</button>
-            </form>
-          );
-        }}
-      </Adopt>
+      <AddBookForm>
+        {({ getBooks: args, addBook }) => (
+          <form onSubmit={this.handleSubmit.bind(this, addBook)}>
+            {this.titleInput()}
+            {this.pagesInput()}
+            {this.authorSelect(args)}
+            <button>Add Book</button>
+          </form>
+        )}
+      </AddBookForm>
     );
   }
 }

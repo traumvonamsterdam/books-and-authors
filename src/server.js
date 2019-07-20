@@ -2,6 +2,8 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import mongoose from "mongoose";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 import { typeDefs, resolvers } from "./schema";
 
@@ -10,10 +12,7 @@ const server = new ApolloServer({
   resolvers
 });
 
-mongoose.connect(
-  "mongodb+srv://jlfly12:wZSYV13*Fm@cluster0-1lwwv.mongodb.net/test?retryWrites=true&w=majority",
-  { useNewUrlParser: true }
-);
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 const app = express();
 app.use(cors());

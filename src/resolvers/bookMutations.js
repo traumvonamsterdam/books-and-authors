@@ -1,5 +1,6 @@
 import { AuthorModel } from "../models/author";
 import { BookModel } from "../models/book";
+import { transformBook } from "./common";
 
 export default {
   addBook: async (root, args) => {
@@ -13,17 +14,16 @@ export default {
         );
       }
 
-      const book = new BookModel({
+      let book = new BookModel({
         title,
         pages,
         authorId
       });
 
-      console.log(author);
-
       author.books.push(book.title);
       await author.save();
-      return book.save();
+      book = await book.save();
+      return transformBook(book);
     } catch (err) {
       throw err;
     }

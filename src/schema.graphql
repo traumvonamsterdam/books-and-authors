@@ -9,7 +9,8 @@ type Book {
   _id: ID!
   title: String!
   pages: Int
-  authorId: String
+  authorId: ID!
+  author: Author
 }
 
 type Query {
