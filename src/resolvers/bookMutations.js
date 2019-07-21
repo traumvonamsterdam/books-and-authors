@@ -34,7 +34,8 @@ export default {
     const author = await AuthorModel.findOne({ _id: book.author._id });
 
     author.books = author.books.filter(book => book._id !== bookId);
-    return BookModel.deleteOne({ _id: bookId });
+    await BookModel.deleteOne({ _id: bookId });
+    return transformBook(book);
   },
 
   updateBook: (root, args) => {
