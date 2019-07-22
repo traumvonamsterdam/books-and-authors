@@ -1,32 +1,29 @@
 import React from "react";
 import { Query } from "react-apollo";
 
-import { getBooksAndAuthorsQuery } from "./queries";
+import { getBooksAndAuthorsQuery } from "../graphql/queries";
 import "./BookList.css";
 
-const BookList = props => {
-  const { loading, error, data } = props.getData;
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Cannot load books</div>;
-  }
-
+const BookList = ({ loading, error, data }) => {
   return (
     <>
-      <ul className="BookList">
-        {data.books.map(book => (
-          <li key={book._id}>{`${book.title} - ${book.author.name}`}</li>
-        ))}
-      </ul>
+      <h3>Available Books</h3>
+      {loading && <div>Loading...</div>}
+      {error && <div>Cannot load books</div>}
+      {!loading && !error && (
+        <ul className="BookList">
+          {data.books.map(book => (
+            <li key={book._id}>{`${book.title} - ${book.author.name}`}</li>
+          ))}
+        </ul>
+      )}
     </>
   );
 };
 
 const WrappedList = () => (
   <Query query={getBooksAndAuthorsQuery}>
-    {getData => <BookList getData={getData} />}
+    {props => <BookList {...props} />}
   </Query>
 );
 

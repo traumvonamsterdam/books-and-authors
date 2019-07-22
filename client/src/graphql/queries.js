@@ -1,16 +1,20 @@
 import { gql } from "apollo-boost";
 
 const getBooksQuery = gql`
-  {
+  query Books {
     books {
       _id
       title
+      author {
+        name
+        _id
+      }
     }
   }
 `;
 
 const getBooksAndAuthorsQuery = gql`
-  {
+  query Books {
     books {
       _id
       title
@@ -23,7 +27,7 @@ const getBooksAndAuthorsQuery = gql`
 `;
 
 const getAuthorsQuery = gql`
-  {
+  query Authors {
     authors {
       _id
       name

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Query } from "react-apollo";
 
-import { getAuthorsQuery } from "./queries";
+import { getAuthorsQuery } from "../graphql/queries";
 import "./AuthorList.css";
 
 class AuthorList extends Component {

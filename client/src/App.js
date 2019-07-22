@@ -17,8 +17,8 @@ class App extends Component {
         <div className="App">
           <h2>Welcome to Our Online Bookstore</h2>
           <AddBookForm />
-          <h3>Available Books</h3>
-          <BookList />
+
+          {/* <BookList /> */}
         </div>
       </ApolloProvider>
     );
