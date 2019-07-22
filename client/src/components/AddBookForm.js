@@ -1,31 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Query, Mutation } from "react-apollo";
-import { getAuthorsQuery, getBooksQuery } from "../graphql/queries";
+import { getAuthorsQuery } from "../graphql/queries";
 import { addBookMutation } from "../graphql/mutations";
+import "./AddBookForm.css";
 
 const AddBookForm = props => {
   const [title, setTitle] = useState("");
   const [pages, setPages] = useState(0);
   const [authorId, setAuthorId] = useState("");
   const [authors, setAuthors] = useState([]);
-  const [books, setBooks] = useState([]);
   const [message, setMessage] = useState("");
 
-  const fetchBooks = () => {
-    const { loading, error, data } = props.getBooks;
-    if (!loading && !error) setBooks(data.books);
-  };
+  useEffect(() => {
+    fetchAuthors();
+  });
 
   const fetchAuthors = () => {
     const { loading, error, data } = props.getAuthors;
-    if (!loading && !error) setAuthors(data.authors);
+    if (!loading && !error) {
+      setAuthors(data.authors);
+    }
   };
-
-  useEffect(() => {
-    fetchBooks();
-    fetchAuthors();
-    return;
-  });
 
   const titleInput = () => (
     <div className="field">
@@ -77,26 +72,6 @@ const AddBookForm = props => {
     );
   };
 
-  const showAllBooks = () => {
-    const { loading, error } = props.getBooks;
-    if (loading) {
-      return <div>Loading authors...</div>;
-    }
-    if (error) {
-      return <div>Cannot load authors</div>;
-    }
-    return (
-      <>
-        <h3>Available Books</h3>
-        <ul className="BookList">
-          {books.map(book => (
-            <li key={book._id}>{`${book.title} - ${book.author.name}`}</li>
-          ))}
-        </ul>
-      </>
-    );
-  };
-
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -117,17 +92,10 @@ const AddBookForm = props => {
       variables: { title, pages, authorId }
     });
 
-    const { refetch } = props.getBooks;
-    const result = await refetch();
-
-    const { loading, error, data } = result;
-
-    if (!loading && !error) {
-      setBooks(data.books);
-      setTitle("");
-      setPages(0);
-      setMessage("Book successfully added!");
-    }
+    props.updateBookList();
+    setTitle("");
+    setPages(0);
+    setMessage("Book successfully added!");
   };
 
   return (
@@ -139,24 +107,19 @@ const AddBookForm = props => {
         <button>Add Book</button>
         {message && <div>{message}</div>}
       </form>
-      {showAllBooks()}
     </>
   );
 };
 
-const WrappedForm = () => (
-  <Query query={getBooksQuery}>
-    {getBooks => (
-      <Query query={getAuthorsQuery}>
-        {getAuthors => (
-          <Mutation mutation={addBookMutation}>
-            {addBook => {
-              const props = { getBooks, getAuthors, addBook };
-              return <AddBookForm {...props} />;
-            }}
-          </Mutation>
-        )}
-      </Query>
+const WrappedForm = ({ updateBookList }) => (
+  <Query query={getAuthorsQuery}>
+    {getAuthors => (
+      <Mutation mutation={addBookMutation}>
+        {addBook => {
+          const props = { getAuthors, addBook, updateBookList };
+          return <AddBookForm {...props} />;
+        }}
+      </Mutation>
     )}
   </Query>
 );
