@@ -1,60 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useStateValue } from "../state/StateProvider";
+
 import { Query } from "react-apollo";
 import { getBooksQuery } from "../graphql/queries";
-import AddBookForm from "./AddBookForm";
-import "./AddBookForm.css";
+import "./BookList.css";
 
-const BookList = props => {
-  const [books, setBooks] = useState([]);
+const BookList = ({ getBooks }) => {
+  const [{ books }, dispatch] = useStateValue();
 
-  const updateBookList = async () => {
-    const { data } = await props.getBooks.refetch();
-    setBooks(data.books);
-  };
+  const { loading, error, data } = getBooks;
 
   useEffect(() => {
-    fetchBooks();
-  });
+    dispatch({ type: "updateBooks", books: data.books });
+  }, [data]);
 
-  const fetchBooks = () => {
-    const { loading, error, data } = props.getBooks;
-    if (!loading && !error) {
-      setBooks(data.books);
-    }
-  };
+  useEffect(() => {
+    dispatch({ type: "updateBooks", books });
+  }, [books]);
 
-  const showAllBooks = () => {
-    const { loading, error } = props.getBooks;
-    if (loading) {
-      return <div>Loading authors...</div>;
-    }
-    if (error) {
-      return <div>Cannot load authors</div>;
-    }
-    return (
-      <>
-        <h3>Available Books</h3>
+  return (
+    <>
+      <h3>Available Books</h3>
+      {loading && <div>Loading books...</div>}
+      {error && <div>Cannot load books...</div>}
+      {!loading && !error && books && (
         <ol className="BookList">
           {books.map(book => (
             <li key={book._id}>{`${book.title} - ${book.author.name}`}</li>
           ))}
         </ol>
-      </>
-    );
-  };
-
-  return (
-    <>
-      <AddBookForm updateBookList={updateBookList} />
-      {showAllBooks()}
+      )}
     </>
   );
 };
 
-const WrappedList = () => (
+export default () => (
   <Query query={getBooksQuery}>
     {getBooks => <BookList getBooks={getBooks} />}
   </Query>
 );
-
-export default WrappedList;

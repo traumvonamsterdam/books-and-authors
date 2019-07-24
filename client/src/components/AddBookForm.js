@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Query, Mutation } from "react-apollo";
+import { useStateValue } from "../state/StateProvider";
+
+import { Mutation, Query } from "react-apollo";
 import { getAuthorsQuery } from "../graphql/queries";
 import { addBookMutation } from "../graphql/mutations";
 import "./AddBookForm.css";
@@ -8,22 +10,19 @@ const AddBookForm = props => {
   const [title, setTitle] = useState("");
   const [pages, setPages] = useState(0);
   const [authorId, setAuthorId] = useState("");
-  const [authors, setAuthors] = useState([]);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    fetchAuthors();
-  });
+  const [{ authors }, dispatch] = useStateValue();
 
-  const fetchAuthors = () => {
-    const { loading, error, data } = props.getAuthors;
-    if (!loading && !error) {
-      setAuthors(data.authors);
-    }
-  };
+  const { loading, error, data } = props.getAuthors;
+
+  useEffect(() => {
+    dispatch({ type: "updateAuthors", authors: data.authors });
+  }, [data]);
 
   const titleInput = () => (
     <div className="field">
+      <main />
       <label>Book title:</label>
       <input
         type="text"
@@ -45,29 +44,25 @@ const AddBookForm = props => {
   );
 
   const authorSelect = () => {
-    const { loading, error } = props.getAuthors;
-    if (loading) {
-      return <div>Loading authors...</div>;
-    }
-    if (error) {
-      return <div>Cannot load authors</div>;
-    }
-
     return (
       <div className="field">
         <label>Author:</label>
-        <select
-          onChange={e => {
-            setAuthorId(e.target.value);
-          }}
-        >
-          <option value="">Select author</option>
-          {authors.map(author => (
-            <option key={author._id} value={author._id}>
-              {author.name}
-            </option>
-          ))}
-        </select>
+        {loading && <div>Loading authors...</div>}
+        {error && <div>Cannot load authors.</div>}
+        {!loading && !error && authors && (
+          <select
+            onChange={e => {
+              setAuthorId(e.target.value);
+            }}
+          >
+            <option value="">Select author</option>
+            {authors.map(author => (
+              <option key={author._id} value={author._id}>
+                {author.name}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
     );
   };
@@ -88,11 +83,10 @@ const AddBookForm = props => {
       return;
     }
 
-    await props.addBook({
-      variables: { title, pages, authorId }
-    });
+    await props.addBook({ variables: { title, pages, authorId } });
+    const { data } = await props.getBooks.refetch();
+    dispatch({ type: "updateBooks", books: data.books });
 
-    props.updateBookList();
     setTitle("");
     setPages(0);
     setMessage("Book successfully added!");
@@ -111,16 +105,12 @@ const AddBookForm = props => {
   );
 };
 
-const WrappedForm = ({ updateBookList }) => (
+export default () => (
   <Query query={getAuthorsQuery}>
     {getAuthors => (
       <Mutation mutation={addBookMutation}>
-        {addBook => {
-          const props = { getAuthors, addBook, updateBookList };
-          return <AddBookForm {...props} />;
-        }}
+        {addBook => <AddBookForm addBook={addBook} getAuthors={getAuthors} />}
       </Mutation>
     )}
   </Query>
 );
-export default WrappedForm;

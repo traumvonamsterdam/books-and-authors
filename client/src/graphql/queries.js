@@ -6,8 +6,8 @@ const getBooksQuery = gql`
       _id
       title
       author {
-        name
         _id
+        name
       }
     }
   }
