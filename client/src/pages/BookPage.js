@@ -4,20 +4,39 @@ import BookList from "../components/BookList";
 
 import { StateProvider } from "../state/StateProvider";
 
-const BookPage = () => {
-  const initialState = { books: [], authors: [] };
+import { Query, Mutation } from "react-apollo";
+import { deleteBookMutation } from "../graphql/mutations";
+import "./BookPage.css";
+
+const BookPage = props => {
+  const initialState = {
+    books: [],
+    authors: [],
+    topMessage: { messageType: null, message: "" }
+  };
 
   const reducer = (state, action) => {
     switch (action.type) {
       case "updateBooks":
-        return {
-          ...state,
-          books: action.books
-        };
+        return { ...state, books: action.books };
       case "updateAuthors":
+        return { ...state, authors: action.authors };
+      case "deleteBook":
+        // const deleteBook = async bookId => {
+        //   await props.deleteBook({ variables: { bookId } });
+        // };
+        // deleteBook(action.bookId);
         return {
           ...state,
-          authors: action.authors
+          books: state.books.filter(book => book._id !== action.bookId)
+        };
+      case "updateMessage":
+        return {
+          ...state,
+          topMessage: {
+            messageType: action.messageType,
+            message: action.message
+          }
         };
       default:
         return state;
@@ -25,11 +44,19 @@ const BookPage = () => {
   };
 
   return (
-    <StateProvider initialState={initialState} reducer={reducer}>
+    <StateProvider
+      initialState={initialState}
+      reducer={reducer}
+      className="page"
+    >
       <AddBookForm />
       <BookList />
     </StateProvider>
   );
 };
 
-export default BookPage;
+export default () => (
+  <Mutation mutation={deleteBookMutation}>
+    {deleteBook => <BookPage deleteBook={deleteBook} />}
+  </Mutation>
+);

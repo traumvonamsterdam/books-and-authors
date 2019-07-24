@@ -31,7 +31,7 @@ export default {
 
   deleteBook: async (root, { bookId }) => {
     const book = await BookModel.findOne({ _id: bookId });
-    const author = await AuthorModel.findOne({ _id: book.author._id });
+    const author = await AuthorModel.findOne({ _id: book.authorId });
 
     author.books = author.books.filter(book => book._id !== bookId);
     await BookModel.deleteOne({ _id: bookId });

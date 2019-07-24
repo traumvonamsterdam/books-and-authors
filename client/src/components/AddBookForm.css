@@ -1,0 +1,18 @@
+h3 {
+  margin-top: 40px;
+}
+
+.form {
+  max-width: 400px;
+  margin-bottom: 60px;
+}
+
+.form div {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+}
+.form button {
+  float: right;
+  cursor: pointer;
+}

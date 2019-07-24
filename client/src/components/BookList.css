@@ -1,0 +1,26 @@
+.book-container {
+}
+
+.book-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 700px;
+}
+
+.book-item div {
+  margin: 5px 10px 0 0;
+}
+
+.book-item button {
+  width: 70px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.book-item div:nth-child(1) {
+  flex: 3;
+}
+.book-item div:nth-child(2) {
+  flex: 2;
+}
