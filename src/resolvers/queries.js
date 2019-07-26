@@ -16,5 +16,10 @@ export default {
   book: async (root, { bookId }) => {
     const book = await BookModel.findOne({ _id: bookId });
     return transformBook(book);
+  },
+
+  author: async (root, { authorId }) => {
+    const author = await AuthorModel.findOne({ _id: authorId });
+    return transformAuthor(author);
   }
 };

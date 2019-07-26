@@ -18,12 +18,17 @@ export default (state, action) => {
         ...state,
         bookId: action.bookId
       };
+    case "viewAuthor":
+      return {
+        ...state,
+        authorId: action.authorId
+      };
     case "updateMessage":
       return {
         ...state,
-        topMessage: {
-          messageType: action.messageType,
-          message: action.message
+        message: {
+          type: action.message.type,
+          text: action.message.text
         }
       };
     default:

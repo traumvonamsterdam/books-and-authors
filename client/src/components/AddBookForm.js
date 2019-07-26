@@ -10,9 +10,8 @@ const AddBookForm = props => {
   const [title, setTitle] = useState("");
   const [pages, setPages] = useState(0);
   const [authorId, setAuthorId] = useState("");
-  const [message, setMessage] = useState("");
 
-  const [{ authors }, dispatch] = useStateValue();
+  const [{ authors, message }, dispatch] = useStateValue();
 
   const { loading, error, data } = props.getAuthors;
 
@@ -70,15 +69,24 @@ const AddBookForm = props => {
     e.preventDefault();
 
     if (!title) {
-      setMessage("Please enter valid title!");
+      dispatch({
+        type: "updateMessage",
+        message: { type: "warning", text: "Please enter valid title!" }
+      });
       return;
     }
     if (pages < 1) {
-      setMessage("Please enter valid number of pages!");
+      dispatch({
+        type: "updateMessage",
+        message: { type: "warning", text: "Please enter valid number of pages" }
+      });
       return;
     }
     if (!authorId) {
-      setMessage("Please choose an author!");
+      dispatch({
+        type: "updateMessage",
+        message: { type: "warning", text: "Please select an author!" }
+      });
       return;
     }
 
@@ -88,7 +96,10 @@ const AddBookForm = props => {
 
     setTitle("");
     setPages(0);
-    setMessage("Book successfully added!");
+    dispatch({
+      type: "updateMessage",
+      message: { type: "success", text: "Book successfully added!" }
+    });
   };
 
   return (
@@ -99,7 +110,6 @@ const AddBookForm = props => {
         {pagesInput()}
         {authorSelect()}
         <button>Add Book</button>
-        {message && <div>{message}</div>}
       </form>
     </>
   );

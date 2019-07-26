@@ -28,13 +28,19 @@ const BookList = ({ deleteBook, getBooks }) => {
     dispatch({ type: "viewBook", bookId: e.target.id });
   };
 
+  const viewThisAuthor = e => {
+    dispatch({ type: "viewAuthor", authorId: e.target.id });
+  };
+
   const showBooks = books =>
     books.map(book => (
       <div className="book-item" key={book._id}>
         <Link onMouseDown={viewThisBook} to="/book" id={book._id}>
           {book.title}
         </Link>
-        <div>{book.author.name}</div>
+        <Link onMouseDown={viewThisAuthor} to="/author" id={book.author._id}>
+          {book.author.name}
+        </Link>
         <button onClick={handleDeleteBook} value={book._id} className="btn">
           Delete
         </button>

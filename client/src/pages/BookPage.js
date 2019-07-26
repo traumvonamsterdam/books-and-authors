@@ -1,38 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { useStateValue } from "../state/StateProvider";
 
-import { Query } from "react-apollo";
-import { getBookQuery } from "../graphql/queries";
+import BookView from "../components/BookView";
+import { Redirect } from "react-router-dom";
 
 const BookPage = () => {
   const [{ bookId }, dispatch] = useStateValue();
-  useEffect(() => {
-    console.log(bookId);
-  }, [bookId]);
-  return (
-    <>
-      {bookId && (
-        <Query query={getBookQuery} variables={{ bookId }}>
-          {bookQuery => {
-            const { loading, error, data } = bookQuery;
-            const { book } = data;
 
-            return (
-              <>
-                {!loading && !error && data && (
-                  <>
-                    <div>{book.title}</div>
-                    <div>Description goes here</div>
-                  </>
-                )}
-              </>
-            );
-          }}
-        </Query>
-      )}
-    </>
+  const renderBook = bookId ? (
+    <BookView bookId={bookId} />
+  ) : (
+    <Redirect to="/" />
   );
+
+  return renderBook;
 };
 
 export default BookPage;

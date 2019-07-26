@@ -2,24 +2,20 @@ import React, { useState } from "react";
 
 import reducer from "./state/reducer";
 import { StateProvider } from "./state/StateProvider";
-import BookListPage from "./pages/BookListPage";
 import HomePage from "./pages/HomePage";
 import BookPage from "./pages/BookPage";
+import AuthorPage from "./pages/AuthorPage";
 import { BrowserRouter, Route, Redirect, Link, Switch } from "react-router-dom";
 import { withRouter } from "react-router";
 
+import initialState from "./state/initialState";
 import AuthContext from "./context/auth-context";
+import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Message from "./components/Message";
 import "./App.css";
 
 const App = () => {
-  const initialState = {
-    books: [],
-    authors: [],
-    bookId: "",
-    topMessage: { messageType: null, message: "" }
-  };
-
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
 
@@ -35,28 +31,20 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <StateProvider
-        initialState={initialState}
-        reducer={reducer}
-        className="page"
-      >
+      <StateProvider initialState={initialState} reducer={reducer}>
         <AuthContext.Provider value={{ token, userId, login, logout }}>
-          <main className="main">
-            {/* {this.state.token && <Redirect from="/" to="/events" exact />}
-          {this.state.token && <Redirect from="/auth" to="/events" exact />}
-          {!this.state.token && <Route path="/auth" component={AuthPage} />}
-          <Route path="/events" component={EventsPage} />
-          {this.state.token && (
-            <Route path="/bookings" component={BookingsPage} />
-          )}
-          {!this.state.token && <Redirect to="/auth" />} */}
-
-            <Switch>
-              <Route path="/book" component={BookPage} />
-              <Route path="/" exact component={HomePage} />
-            </Switch>
-          </main>
-          <Footer />
+          <div className="container">
+            <Navbar />
+            <main className="main">
+              <Message />
+              <Switch>
+                <Route path="/book" component={BookPage} />
+                <Route path="/author" component={AuthorPage} />
+                <Route path="/" exact component={HomePage} />
+              </Switch>
+            </main>
+            <Footer />
+          </div>
         </AuthContext.Provider>
       </StateProvider>
     </BrowserRouter>

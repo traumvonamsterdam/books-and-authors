@@ -12,20 +12,6 @@ const getBooksQuery = gql`
     }
   }
 `;
-
-const getBooksAndAuthorsQuery = gql`
-  query Books {
-    books {
-      _id
-      title
-      author {
-        name
-        _id
-      }
-    }
-  }
-`;
-
 const getBookQuery = gql`
   query Book($bookId: ID!) {
     book(bookId: $bookId) {
@@ -33,8 +19,8 @@ const getBookQuery = gql`
       pages
       title
       author {
-        name
         _id
+        name
       }
     }
   }
@@ -49,9 +35,18 @@ const getAuthorsQuery = gql`
   }
 `;
 
-export {
-  getBooksQuery,
-  getBooksAndAuthorsQuery,
-  getAuthorsQuery,
-  getBookQuery
-};
+const getAuthorQuery = gql`
+  query Author($authorId: ID!) {
+    author(authorId: $authorId) {
+      _id
+      name
+      age
+      books {
+        _id
+        title
+      }
+    }
+  }
+`;
+
+export { getBooksQuery, getAuthorsQuery, getBookQuery, getAuthorQuery };
