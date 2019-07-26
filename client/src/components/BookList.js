@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useStateValue } from "../state/StateProvider";
+import { BrowserRouter, Route, Redirect, Link } from "react-router-dom";
 
 import { Query, Mutation } from "react-apollo";
 import { getBooksQuery } from "../graphql/queries";
@@ -23,10 +24,17 @@ const BookList = ({ deleteBook, getBooks }) => {
     await deleteBook({ variables: { bookId } });
   };
 
+  const viewThisBook = e => {
+    console.log(e.target.key);
+    dispatch({ type: "viewBook", bookId: e.target });
+  };
+
   const showBooks = books =>
     books.map(book => (
-      <div className="book-item">
-        <div>{book.title}</div>
+      <div className="book-item" key={book._id}>
+        <span onMouseDown={viewThisBook} key={book._id}>
+          <Link to="/book">{book.title}</Link>
+        </span>
         <div>{book.author.name}</div>
         <button onClick={handleDeleteBook} value={book._id} className="btn">
           Delete

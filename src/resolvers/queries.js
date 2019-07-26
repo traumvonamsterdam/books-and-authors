@@ -13,8 +13,8 @@ export default {
     return authors.map(author => transformAuthor(author));
   },
 
-  book: async (root, { title }) => {
-    const book = await BookModel({ title });
+  book: async (root, { bookId }) => {
+    const book = await BookModel.findOne({ _id: bookId });
     return transformBook(book);
   }
 };
