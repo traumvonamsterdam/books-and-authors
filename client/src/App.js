@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import initialState from "./state/initialState";
 import reducer from "./state/reducer";
 import { StateProvider } from "./state/StateProvider";
 import HomePage from "./pages/HomePage";
@@ -8,7 +9,6 @@ import AuthorPage from "./pages/AuthorPage";
 import { BrowserRouter, Route, Redirect, Link, Switch } from "react-router-dom";
 import { withRouter } from "react-router";
 
-import initialState from "./state/initialState";
 import AuthContext from "./context/auth-context";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";

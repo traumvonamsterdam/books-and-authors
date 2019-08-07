@@ -1,27 +1,23 @@
 import React from "react";
-import { Query } from "react-apollo";
+import { useQuery } from "@apollo/react-hooks";
 import { getAuthorQuery } from "../graphql/queries";
 
-const AuthorView = ({ authorId }) => (
-  <Query query={getAuthorQuery} variables={{ authorId }}>
-    {authorQuery => {
-      const { loading, error, data } = authorQuery;
-      const { author } = data;
+const AuthorView = ({ authorId }) => {
+  const { loading, error, data } = useQuery(getAuthorQuery, {
+    variables: { authorId }
+  });
 
-      return (
+  return (
+    <>
+      {loading && <div>Loading author description...</div>}
+      {error && <div>An error occurred.</div>}
+      {!loading && !error && data && (
         <>
-          {loading && <div>Loading author description...</div>}
-          {error && <div>An error occurred.</div>}
-          {!loading && !error && data && (
-            <>
-              <div>{author.name}</div>
-              <div>Description goes here</div>
-            </>
-          )}
+          <div>{data.author.name}</div>
+          <div>Description goes here</div>
         </>
-      );
-    }}
-  </Query>
-);
-
+      )}
+    </>
+  );
+};
 export default AuthorView;

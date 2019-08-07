@@ -2,15 +2,16 @@ import React, { useEffect } from "react";
 import { useStateValue } from "../state/StateProvider";
 import { BrowserRouter, Route, Redirect, Link } from "react-router-dom";
 
-import { Query, Mutation } from "react-apollo";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import { getBooksQuery } from "../graphql/queries";
 import { deleteBookMutation } from "../graphql/mutations";
 import "./BookList.css";
 
-const BookList = ({ deleteBook, getBooks }) => {
+const BookList = () => {
   const [{ books }, dispatch] = useStateValue();
 
-  const { loading, error, data } = getBooks;
+  const { loading, error, data } = useQuery(getBooksQuery);
+  const [deleteBook] = useMutation(deleteBookMutation);
 
   useEffect(() => {
     if (!loading && !error && data) {
@@ -57,12 +58,4 @@ const BookList = ({ deleteBook, getBooks }) => {
   );
 };
 
-export default () => (
-  <Query query={getBooksQuery}>
-    {getBooks => (
-      <Mutation mutation={deleteBookMutation}>
-        {deleteBook => <BookList getBooks={getBooks} deleteBook={deleteBook} />}
-      </Mutation>
-    )}
-  </Query>
-);
+export default BookList;

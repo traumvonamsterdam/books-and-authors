@@ -1,27 +1,23 @@
 import React from "react";
-import { Query } from "react-apollo";
+import { useQuery } from "@apollo/react-hooks";
 import { getBookQuery } from "../graphql/queries";
 
-const BookView = ({ bookId }) => (
-  <Query query={getBookQuery} variables={{ bookId }}>
-    {bookQuery => {
-      const { loading, error, data } = bookQuery;
-      const { book } = data;
+const BookView = ({ bookId }) => {
+  const { loading, error, data } = useQuery(getBookQuery, {
+    variables: { bookId }
+  });
 
-      return (
+  return (
+    <>
+      {loading && <div>Loading book description...</div>}
+      {!loading && !error && data && (
         <>
-          {loading && <div>Loading book description...</div>}
-          {error && <div>An error occurred.</div>}
-          {!loading && !error && data && (
-            <>
-              <div>{book.title}</div>
-              <div>Description goes here</div>
-            </>
-          )}
+          <div>{data.book.title}</div>
+          <div>Description goes here</div>
         </>
-      );
-    }}
-  </Query>
-);
+      )}
+    </>
+  );
+};
 
 export default BookView;

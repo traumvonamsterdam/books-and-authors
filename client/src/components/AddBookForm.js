@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useStateValue } from "../state/StateProvider";
 
-import { Mutation, Query } from "react-apollo";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import { getBooksQuery, getAuthorsQuery } from "../graphql/queries";
 import { addBookMutation } from "../graphql/mutations";
 import "./AddBookForm.css";
@@ -13,7 +13,10 @@ const AddBookForm = props => {
 
   const [{ authors, message }, dispatch] = useStateValue();
 
-  const { loading, error, data } = props.getAuthors;
+  const { loading, error, data } = useQuery(getAuthorsQuery)
+  const { refetch: refetchBooks } = useQuery(getBooksQuery)
+  const [addBook] = useMutation(addBookMutation)
+
 
   useEffect(() => {
     if (!loading && !error && data) {
@@ -90,8 +93,8 @@ const AddBookForm = props => {
       return;
     }
 
-    await props.addBook({ variables: { title, pages, authorId } });
-    const { data } = await props.getBooks.refetch();
+    await addBook({ variables: { title, pages, authorId } });
+    const { data } = await refetchBooks();
     dispatch({ type: "updateBooks", books: data.books });
 
     setTitle("");
@@ -115,22 +118,4 @@ const AddBookForm = props => {
   );
 };
 
-export default () => (
-  <Query query={getBooksQuery}>
-    {getBooks => (
-      <Query query={getAuthorsQuery}>
-        {getAuthors => (
-          <Mutation mutation={addBookMutation}>
-            {addBook => (
-              <AddBookForm
-                addBook={addBook}
-                getAuthors={getAuthors}
-                getBooks={getBooks}
-              />
-            )}
-          </Mutation>
-        )}
-      </Query>
-    )}
-  </Query>
-);
+export default AddBookForm
