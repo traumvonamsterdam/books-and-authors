@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel-watch src/server.js",
-    "build": "babel src --out-dir dist",
+    "start": "babel-watch app.js",
+    "build": "babel --out-dir dist",
     "serve": "node dist/server.js"
   },
   "author": "James Leung",
